@@ -57,7 +57,8 @@ docker run -t -i -v /d/PycharmProjects:/test ldzm/myubuntu:14.04 /bin/bash
 /test为容器中的文件的绝对路径
 
 ```bash
-docker run -itd -v /d/PycharmProjects:/work  --name try1 kortanzh/xv6 bash #容器的名字
+docker run -itd -v /d/PycharmProjects:/work  --name try1 kortanzh/xv6 bash #try1是容器的名字. 会新建D:\PycharmProjects
+docker run -itd -v /d/PycharmProjects:/work -e BUILDER_UID=123 -e BUILDER_GID=456 --name container_name kortanzh/xv6 bash
 ```
 
 -v /d/PycharmProjects:/work
@@ -75,12 +76,27 @@ docker run -d  -v /c/Users/systemDir:/usr/local/log balance
 
  在运行的容器中执行命令 ,退出container时，让container仍然在后台运行
 
-在容器 mynginx 中以交互模式执行容器内 /root/runoob.sh 脚本:
-
 ```bash
-runoob@runoob:~$ docker exec -it mynginx /bin/sh /root/runoob.sh
+docker exec -it  --user "$(id -u)" mynginx /bin/sh /root/runoob.sh #在容器 mynginx 中以交互模式执行容器内 /root/runoob.sh 脚本
 docker exec -it 9df70f9a0714 /bin/bash  #通过 exec 命令对指定id的容器执行 bash:
 ```
+
+#### 为什么要用非root用户启动容器
+
+默认情况下，容器中的进程以 root 用户权限运行，并且这个 root 用户和宿主机中的 root 是同一个用户。所以大家直接启动容器，并在容器内部跑程序时，你在宿主机上用top等命令查看进程时，以及用nvidia-smi查看显卡使用时，显示的都是root用户在运行。
+
+这样会带来几个问题。1. 你在容器中保存的文件的拥有者并不是你，而是root用户，当你的容器被销毁后，你在宿主机上是没有权限对这些文件进行操作的。2. 对于其他用户来说，他人无法通过nvidia-smi查看显卡是谁在使用，因为通过进程ID查到的是root用户在跑程序。这不方便同事之间进行显卡利用的沟通，也不方便管理员监管。当部分进程有问题时，管理员不知道找谁。
+
+#### 怎么以非root用户启动容器。
+
+```shell
+docker run --user $(id -u ${USER}):$(id -g ${USER})  <其他参数>
+docker run -itd -v /path/to/workfolder:/work -e BUILDER_UID="$(id -u)" -e BUILDER_GID="$(id -g)" --name container_name kortanzh/xv6 bash #linux 是BUILDER_UID="$(id -u)" -e BUILDER_GID="$(id -g)" ,windows是  --user $(id -u ${USER}):$(id -g ${USER})
+```
+
+通过 `--user $(id -u ${USER}):$(id -g ${USER})` 的参数可以指定以当前宿主机用户的身份启动容器。`–-user`是用来指定docker容器中用户的id的，`$(id -u ${USER}):$(id -g ${USER})` 是自动解析id命令返回的uid和组id，这样就不用自己去查询id了。
+
+所以相比于之间大家使用docker，唯一的改变就是在启动容器的时候加上`--user $(id -u ${USER}):$(id -g ${USER})`这一段话就可以了。
 
 ### attach
 
@@ -96,7 +112,6 @@ docker exec -it 9df70f9a0714 /bin/bash  #通过 exec 命令对指定id的容器�
 docker container run #命令会从 image 文件，生成一个正在运行的容器实例container。
 docker ps -a #看所有的container，包括运行中的，以及未运行的或者说是沉睡镜像
 docker attach container_name   #container运行在后台，如果想进入它的终端,用attach有一个缺点，那就是每次从container中退出到前台时，container也跟着结束任务了。
-
 docker container rm goofy_almeida#删除运行的容器文件，释放硬盘空间
 docker container kill [containID] #stop可以过一会儿停. kill是马上停
 docker container start #重复使用容器，它用来启动已经生成、已经停止运行的容器文件。
@@ -266,11 +281,18 @@ windows同步了, container里面时间还是错的.
 Net stop com.docker.service
 Net start com.docker.service
 
+7 windows没有uid和组id, 怎么--user启动? 
+
+方法一: 我试试自己创建一个
+
+```
+docker run -itd -v /d/PycharmProjects:/work -e BUILDER_UID=123 -e BUILDER_GID=456 --name container_name kortanzh/xv6 bash  
+返回 : 2fe47549fa9131f569a409e8f29c03a929ac1212e35bee0d68a5ad70411742ca
+我再 docker exec -it --user 123 container_name bash 这个可以,
+显示[adam@2fe47549fa91 work]$ 我怀疑他创建了一个user为123的.哈哈哈哈哈尝试成功了!
+```
 
 
 
 
-## xv6
-
-pull 大概有一个 gbhttps://hub.docker.com/r/kortanzh/xv6
 
