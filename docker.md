@@ -292,7 +292,13 @@ docker run -itd -v /d/PycharmProjects:/work -e BUILDER_UID=123 -e BUILDER_GID=45
 显示[adam@2fe47549fa91 work]$ 我怀疑他创建了一个user为123的.哈哈哈哈哈尝试成功了!
 ```
 
+问题8 :WSL 2 installation is incomplete.
 
+解决方法:
+
+如果使用的是 ARM64 计算机，请下载[ARM64 包](https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_arm64.msi)。如果不确定自己计算机的类型，请打开命令提示符或 PowerShell，并输入：systeminfo | find "System Type"。
+
+我们是中文的,所以这样是找不到的, 应该systeminfo 然后肉眼找 "系统类型". 
 
 
 
