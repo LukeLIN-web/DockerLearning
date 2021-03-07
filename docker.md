@@ -4,7 +4,7 @@
 
 登录阿里云, 镜像源https://cr.console.aliyun.com/cn-hangzhou/instances/mirrors 左边的**镜像加速器**. 
 
-
+[MIT_6.828 环境配置_helloworld19970916的博客-CSDN博客](https://blog.csdn.net/helloworld19970916/article/details/81603056)
 
 卡到setting都打不开,绝了.重启, 关闭, 多试几次好像就变流畅了
 
