@@ -102,6 +102,10 @@ docker run -itd -v /path/to/workfolder:/work -e BUILDER_UID="$(id -u)" -e BUILDE
 
 连接到正在运行中的容器。**Do not use `exit` to quit if you are half done your jobs, use `ctrl-p ctrl-q` to detach from the container.**  CTRL-C不仅会导致退出容器，而且还stop了
 
+[vscode远程连接docker容器__这也太刺激了吧的博客-CSDN博客](https://blog.csdn.net/weixin_40641725/article/details/105512106)
+
+上面的方法用vscode直接连接而不是用命令行. gui很爽.
+
 
 
 
@@ -300,5 +304,25 @@ docker run -itd -v /d/PycharmProjects:/work -e BUILDER_UID=123 -e BUILDER_GID=45
 
 我们是中文的,所以这样是找不到的, 应该systeminfo 然后肉眼找 "系统类型". 
 
+###  用docker来运行sql server
 
+https://hub.docker.com/_/microsoft-mssql-server
+
+9.1 [SQL Server 2019 in Docker: You can accept the EULA by specifying the --accept-eula command line option](https://stackoverflow.com/questions/64319491/sql-server-2019-in-docker-you-can-accept-the-eula-by-specifying-the-accept-eu)
+
+```
+原因: 没有启动license , 可以试试docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=123456a@" -p 1433:1433 -d mcr.microsoft.com/mssql/server:2019-latest
+```
+
+9.2 : 连接到微软 SQL 服务器 您可以使用容器内的 sqlcmd 工具使用主机上的以下命令连接到 SQL 服务器 .这个账号密码是多少?
+
+Sqlcmd: Error: Microsoft ODBC Driver 17 for SQL Server : Login failed for user '126810658'..
+
+用 docker exec -it 9df70f9a0714 /bin/bash  进入container, 然后 看到有个安装的shell脚本, 里面说user 'mssql' 
+
+忽然发现其实都有官方文档:https://docs.microsoft.com/zh-cn/sql/linux/quickstart-install-connect-docker?view=sql-server-ver15&pivots=cs1-bash
+
+
+
+还是官方文档好.下次可以来这里搜索https://docs.microsoft.com/zh-cn/
 
