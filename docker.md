@@ -106,10 +106,6 @@ docker run -itd -v /path/to/workfolder:/work -e BUILDER_UID="$(id -u)" -e BUILDE
 
 上面的方法用vscode直接连接而不是用命令行. gui很爽.
 
-
-
-
-
 ## container文件
 
 ```bash
@@ -170,8 +166,6 @@ docker image build -t koa-demo:0.0.1 .
 
 上面代码中，`-t`参数用来指定 image 文件的名字，后面还可以用冒号指定标签。如果不指定，默认的标签就是`latest`。最后的那个点表示 Dockerfile 文件所在的路径，上例是当前路径，所以是一个点。
 
-
-
 ```bash
 docker login
 $ docker image tag [imageName] [username]/[repository]:[tag]
@@ -192,13 +186,7 @@ $ docker image push luke/koa-demo:0.0.1
 docker login
 ```
 
-
-
-
-
 ## 问题
-
-
 
 1-5是ubuntu的问题 1 E: Unable to locate package git
 
@@ -322,7 +310,25 @@ Sqlcmd: Error: Microsoft ODBC Driver 17 for SQL Server : Login failed for user '
 
 忽然发现其实都有官方文档:https://docs.microsoft.com/zh-cn/sql/linux/quickstart-install-connect-docker?view=sql-server-ver15&pivots=cs1-bash
 
-
-
 还是官方文档好.下次可以来这里搜索https://docs.microsoft.com/zh-cn/
+
+# tensorflow
+
+[Docker  | TensorFlow](https://www.tensorflow.org/install/docker)
+
+[How to Install TensorFlow on Ubuntu 20.04 | Atlantic.Net](https://www.atlantic.net/vps-hosting/how-to-install-tensorflow-on-ubuntu-20-04/)
+
+报错有,但是太麻烦了, 懒得管他,用到再说把.
+
+[Warning when trying run tensorflow with Docker on Windows - Stack Overflow](https://stackoverflow.com/questions/56817112/warning-when-trying-run-tensorflow-with-docker-on-windows)
+
+我再 docker exec -it --user 123 container_name bash 这个可以,
+
+显示:You are running this container as user with ID 123 and group 0,which should map to the ID and group for your user on the Docker host. Great!
+
+映射自己的代码进container:
+
+```
+docker run -it --rm -v $PWD:/tmp -w /tmp tensorflow/tensorflow python ./script.py
+```
 
