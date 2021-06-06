@@ -38,11 +38,14 @@ windows会下载到 C:\users\Public\Documents公用文档中.您的卷目录是`
 ```
 
 ```bash
+run一个image
+docker run -i ucbbar/riscv-docker-images:b266e97-3_922-1.0.1 /bin/bash 但是下一次start不起来. 不能start /bin/bash
 container
 $ docker container run hello-world
 $ docker container run -it ubuntu bash #新建一个ubuntu容器,进bash如果要退出就：Ctrl-D 或者exit
-docker exec -i -t 5c72d3b508ed /bin/bash #打开已经在运行的container终端 , 可以简化为 -it 
-docker container run -p 8000:3000 -it koa-demo:0.0.1 /bin/bash #容器的 3000 端口映射到本机的 8000 端口。 这里可能要开一下防火墙, Node 进程运行在 Docker 容器的虚拟环境里面，进程接触到的文件系统和网络接口都是虚拟的，与本机的文件系统和网络接口是隔离的，因此需要定义容器与物理机的端口映射（map）。
+docker container run -p 8000:3000 -it koa-demo:0.0.1 /bin/bash #容器的 3000 端口映射到本机的 8000 端口。 这里可能要开一下防火墙, Node 进程运行在 Docker 容器的虚拟环境里面，进程接触到的文件系统和网络接口都是虚拟的，与本机的文件系统和网络接口是隔离的，因此需要定义容器与物理机的端口映射（map)
+docker 怎么下一次run还可以用上次的文件
+
 ```
 
 ### 挂载绑定
@@ -72,14 +75,29 @@ docker run -itd -v /d/PycharmProjects:/work -e BUILDER_UID=123 -e BUILDER_GID=45
 docker run -d  -v /c/Users/systemDir:/usr/local/log balance
 ```
 
+### start
+
+```
+docker start -a #{containerName}/#{containerID} 但是开一下就关了.怎么让他一直运行呢?
+```
+
+
+
 ### exec
 
- 在运行的容器中执行命令 ,退出container时，让container仍然在后台运行
+ 在运行的容器中执行命令,退出container时，让container仍然在后台运行
 
 ```bash
 docker exec -it  --user "$(id -u)" mynginx /bin/sh /root/runoob.sh #在容器 mynginx 中以交互模式执行容器内 /root/runoob.sh 脚本
 docker exec -it 9df70f9a0714 /bin/bash  #通过 exec 命令对指定id的容器执行 bash:
+docker exec -i -t 5c72d3b508ed /bin/bash #打开已经在运行的container终端 , 可以简化为 -it 
 ```
+
+暂停容器
+
+有时我们只是希望让容器暂停工作一段时间，比如要对容器的文件系统打个快照，或者docker host需要使用CPU，这是执行docker pause。
+
+处于暂停状态的容器不会占用CPU资源，直接通过docker unpause恢复运行。
 
 #### 为什么要用非root用户启动容器
 
@@ -106,6 +124,8 @@ docker run -itd -v /path/to/workfolder:/work -e BUILDER_UID="$(id -u)" -e BUILDE
 
 上面的方法用vscode直接连接而不是用命令行. gui很爽.
 
+**docker logs :** 获取容器的日志
+
 ## container文件
 
 ```bash
@@ -114,7 +134,7 @@ docker ps -a #看所有的container，包括运行中的，以及未运行的或
 docker attach container_name   #container运行在后台，如果想进入它的终端,用attach有一个缺点，那就是每次从container中退出到前台时，container也跟着结束任务了。
 docker container rm goofy_almeida#删除运行的容器文件，释放硬盘空间
 docker container kill [containID] #stop可以过一会儿停. kill是马上停
-docker container start #重复使用容器，它用来启动已经生成、已经停止运行的容器文件。
+docker container start  [containID] #重复使用容器，它用来启动已经生成、已经停止运行的容器文件。
 ```
 
 注意，`docker container run`命令具有自动抓取 image 文件的功能。如果发现本地没有指定的 image 文件，就会从仓库自动抓取。因此，前面的`docker image pull`命令并不是必需的步骤。
@@ -312,7 +332,7 @@ Sqlcmd: Error: Microsoft ODBC Driver 17 for SQL Server : Login failed for user '
 
 还是官方文档好.下次可以来这里搜索https://docs.microsoft.com/zh-cn/
 
-# tensorflow
+## tensorflow
 
 [Docker  | TensorFlow](https://www.tensorflow.org/install/docker)
 
@@ -331,4 +351,10 @@ Sqlcmd: Error: Microsoft ODBC Driver 17 for SQL Server : Login failed for user '
 ```
 docker run -it --rm -v $PWD:/tmp -w /tmp tensorflow/tensorflow python ./script.py
 ```
+
+
+
+## riscv
+
+start了没有用
 
