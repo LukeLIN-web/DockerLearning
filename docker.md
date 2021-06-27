@@ -126,6 +126,16 @@ docker run -itd -v /path/to/workfolder:/work -e BUILDER_UID="$(id -u)" -e BUILDE
 
 **docker logs :** 获取容器的日志
 
+### 复制docker
+
+```dockerfile
+先mkdir, docker ps看一下名字
+docker cp silly_rosalind:/root/file.c windoc 从docker到windows的windoc文件夹
+docker cp windoc silly_rosalind:/root/a.out  从windows复制到docker
+```
+
+
+
 ## container文件
 
 ```bash
@@ -356,5 +366,23 @@ docker run -it --rm -v $PWD:/tmp -w /tmp tensorflow/tensorflow python ./script.p
 
 ## riscv
 
-start了没有用
+容器stop后,start了没有用, 可以用pause.
+
+
+
+## 网络
+
+docker ubuntu的网络 和host共享吗?
+
+安装Docker时，它会自动创建三个网络，bridge（创建容器默认连接到此网络）、 none 、host
+
+host：容器将不会虚拟出自己的网卡，配置自己的IP等，而是使用宿主机的IP和端口。
+
+Container：创建的容器不会创建自己的网卡，配置自己的IP，而是和一个指定的容器共享IP、端口范围。
+
+None：该模式关闭了容器的网络功能。
+
+Bridge：此模式会为每一个容器分配、设置IP等，并将容器连接到一个docker0虚拟网桥，通过docker0网桥以及Iptables nat表配置与宿主机通信。
+
+[Docker：网络模式详解 - Gringer - 博客园 (cnblogs.com)](https://www.cnblogs.com/zuxing/articles/8780661.html)
 
